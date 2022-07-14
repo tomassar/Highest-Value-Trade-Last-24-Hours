@@ -1,14 +1,14 @@
 require 'httparty'
-require 'http'
+require 'httpx'
 
 class TransactionsController < ApplicationController
   def index
     Transaction.delete_all
     url = "https://www.buda.com/api/v2/"
     # response = HTTParty.get(url+"markets.json", format: :json)
-    response = HTTP.get(url+"markets.json")
-    puts response
-    response = response.parse
+    response = HTTPX.get(url+"markets.json")
+    puts response.status
+    response = response.body
     puts response
       
     end

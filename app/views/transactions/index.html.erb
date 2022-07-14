@@ -1,0 +1,18 @@
+<h1>Highest trade value per market in the past 24 hours</h1>
+<h5>It may take a while, since buda's api throws error 429 when too many requests.</h5>
+<table class="rwd-table">
+  <tr>
+    <th>Market</th>
+    <th>Highest Trade Value</th>
+  </tr>
+    <% @transactions.each do |transaction| %>
+        <tr>
+            <td data-th="Market"> 
+                <%=transaction.market%>
+            </td>
+            <td data-th="Highest Trade Value"> 
+                <%=transaction.value%>
+            </td>
+        </tr>
+    <% end %>
+</table>

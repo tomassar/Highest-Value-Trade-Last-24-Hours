@@ -4,7 +4,7 @@ class TransactionsController < ApplicationController
   def index
     Transaction.delete_all
     url = "https://www.buda.com/api/v2/"
-    response = HTTParty.get(url+"markets.json")
+    response = HTTParty.get(url+"markets.json", format: :json)
     if response.code==200
       puts "worked"
     else
@@ -13,15 +13,15 @@ class TransactionsController < ApplicationController
     end
     markets = response["markets"].map{ |market| market["id"]}
     currentTime = DateTime.now()
-    trades_per_market = markets.map{ |market| HTTParty.get(url+"markets/#{market}/trades.json?limit=100&last_timestamp=#{(currentTime.to_time.to_i-(86400))*1000}")["trades"]["entries"]}
+    trades_per_market = markets.map{ |market| HTTParty.get(url+"markets/#{market}/trades.json?limit=100&last_timestamp=#{(currentTime.to_time.to_i-(86400))*1000}", format: :json)["trades"]["entries"]}
     for i in 1..15 do
       newTrades_per_market = markets.map{ |market| 
-        response = HTTParty.get(url+"markets/#{market}/trades.json?timestamp=#{(currentTime.to_time.to_i-(5400*i))*1000}&limit=100&last_timestamp=#{(currentTime.to_time.to_i-(86400))*1000}")
+        response = HTTParty.get(url+"markets/#{market}/trades.json?timestamp=#{(currentTime.to_time.to_i-(5400*i))*1000}&limit=100&last_timestamp=#{(currentTime.to_time.to_i-(86400))*1000}", format: :json)
         #Due to 429 error throwed by buda's API (Too many requests)
         if response.code!=200
           puts "sleeping"
           sleep(20)
-          response = HTTParty.get(url+"markets/#{market}/trades.json?timestamp=#{(currentTime.to_time.to_i-(5400*i))*1000}&limit=100&last_timestamp=#{(currentTime.to_time.to_i-(86400))*1000}")
+          response = HTTParty.get(url+"markets/#{market}/trades.json?timestamp=#{(currentTime.to_time.to_i-(5400*i))*1000}&limit=100&last_timestamp=#{(currentTime.to_time.to_i-(86400))*1000}", format: :json)
         end
         response["trades"]["entries"]
       }

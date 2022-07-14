@@ -1,14 +1,15 @@
 require 'httparty'
+require 'http'
 
 class TransactionsController < ApplicationController
   def index
     Transaction.delete_all
     url = "https://www.buda.com/api/v2/"
-    response = HTTParty.get(url+"markets.json", format: :json)
-    if response.code==200
-      puts "worked"
-    else
-      puts "didn't work"
+    # response = HTTParty.get(url+"markets.json", format: :json)
+    response = HTTP.get(url+"markets.json")
+    puts response
+    response = response.parse
+    puts response
       
     end
     markets = response["markets"].map{ |market| market["id"]}
